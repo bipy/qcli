@@ -24,6 +24,9 @@ from glob import glob
 from os.path import basename, dirname, expanduser, join
 from pyqi.core.exception import IncompetentDeveloperError
 
+### for an isintance check. not very excited about this
+from pyqi.core.command import CommandIn, Parameter as CommandParameter
+
 class Interface(object):
     CommandConstructor = None
 
@@ -44,7 +47,9 @@ class Interface(object):
     def __call__(self, in_, *args, **kwargs):
         self._the_in_validator(in_)
         cmd_input = self._input_handler(in_, *args, **kwargs)
-        return self._output_handler(self.CmdInstance(**cmd_input))
+        cmd_result = self.CmdInstance(**cmd_input)
+        self._the_out_validator(cmd_result)
+        return self._output_handler(cmd_result)
 
     def _validate_usage_examples(self, usage_examples):
         """Perform validation on a list of ``InterfaceUsageExample`` objects.
@@ -75,13 +80,13 @@ class Interface(object):
                                             "same Parameter.")
 
     def _validate_outputs(self, outputs):
-        """Perform validation on a list of ``InterfaceResult`` objects.
+        """Perform validation on a list of ``InterfaceOutput`` objects.
 
         ``outputs`` will be the output of ``self._get_outputs()``. Subclasses
         can override to perform validation that requires a list of all
         interface results. Validation that should be performed on a
         per-interface result basis should instead go into
-        ``InterfaceResult._validate_result``.
+        ``InterfaceOutput._validate_result``.
         """
         pass
 
@@ -89,6 +94,11 @@ class Interface(object):
         """The job securator"""
         raise NotImplementedError("All subclasses must implement "
                                   "_the_in_validator.")
+
+    def _the_out_validator(self, out_):
+        """The result securator"""
+        raise NotImplementedError("All subclasses must implement "
+                                  "_the_out_validator.")
 
     def _input_handler(self, in_, *args, **kwargs):
         raise NotImplementedError("All subclasses must implement "
@@ -115,7 +125,7 @@ class Interface(object):
         raise NotImplementedError("Must define _get_inputs")
 
     def _get_outputs(self):
-        """Return a list of ``InterfaceResult`` objects
+        """Return a list of ``InterfaceOutput`` objects
         
         These are typically set in a command+interface specific configuration
         file and passed to ``pyqi.core.general_factory``
@@ -131,11 +141,21 @@ class Interface(object):
         raise NotImplementedError("Must define _get_version")
 
 class InterfaceOption(object):
-    """Describes an option and what to do with it"""
-    def __init__(self, Parameter=None, InputType=None, InputAction=None,
-                 InputHandler=None, ShortName=None, Name=None, Required=False,
-                 Help=None, Default=None, DefaultDescription=None,
-                 convert_to_dashed_name=True):
+    """Describes an option and what to do with it
+    
+    ``Parameter`` is a pyqi.core.command.Parameter instance
+    ``Type`` refers to the interface type, not the actually datatype of the
+        ``Parameter``. For instance, a file path may be specified on a command
+        line interface for a BIOM table. The ``Parameter.Datatype`` is a BIOM 
+        type, while the ``InterfaceOption.Type`` is a string or possibly a 
+        ``FilePath`` object.
+    ``Handler`` is a function that can take the value associated with the
+        option and transform it into the ``Parameter.DataType``.
+    ``Name`` is the name of the ``InterfaceOption``, e.g,, 'input-fp'
+    ``Help`` is a description of the ``InterfaceOption``
+    """
+    def __init__(self, Parameter=None, Type=None, Handler=None, Name=None,
+                 Help=None):
         self.Parameter = Parameter
 
         if self.Parameter is None:
@@ -149,40 +169,15 @@ class InterfaceOption(object):
                                                 "doesn't have a Parameter.")
             self.Name = Name
             self.Help = Help
-            self.Required = Required
-            self.Default = Default
-            self.DefaultDescription = DefaultDescription
+
         else:
             # Transfer information from Parameter unless overridden here.
             self.Name = Parameter.Name if Name is None else Name
             self.Help = Parameter.Description if Help is None else Help
-            self.Default = Parameter.Default if Default is None else Default
-            self.DefaultDescription = Parameter.DefaultDescription if \
-                    DefaultDescription is None else DefaultDescription
-
-            # If a parameter is required, the option is always required, but
-            # if a parameter is not required, but the option does require it,
-            # then we make the option required.
-            if not Parameter.Required and Required:
-                self.Required = True
-            else:
-                self.Required = Parameter.Required
-
-        # This information is never contained in a Parameter.
-        self.InputType = InputType
-        self.InputAction = InputAction
-        self.InputHandler = InputHandler
-        self.ShortName = ShortName
-
-        if convert_to_dashed_name:
-            self.Name = self.Name.replace('_', '-')
-
-        if self.Required and self.Default is not None:
-            raise IncompetentDeveloperError("Found required option '%s' "
-                    "with default value '%s'. Required options cannot have "
-                    "default values." % (self.Name, self.Default))
-
-        self._validate_option()
+            
+        # This information is never contained in a Parameter. 
+        self.Type = Type
+        self.Handler = Handler
 
     def _validate_option(self):
         """Interface specific validation requirements"""
@@ -194,19 +189,45 @@ class InterfaceOption(object):
         else:
             return self.Parameter.Name
 
-class InterfaceResult(object):
-    """Describes a result and what to do with it"""
+class InterfaceInputOption(InterfaceOption):
+    def __init__(self, Action=None, Required=False, Default=None, 
+                 ShortName=None, DefaultDescription=None, 
+                 convert_to_dashed_name=True, **kwargs):
+        super(InterfaceInputOption, self).__init__(**kwargs)
 
-    def __init__(self, ResultKey, OutputHandler, OptionName=None):
-        self.ResultKey = ResultKey
-        self.OutputHandler = OutputHandler
-        self.OptionName = OptionName
+        self.Required = Required
+        self.Default = Default
+        self.DefaultDescription = DefaultDescription
+        self.ShortName = ShortName
+        self.Action = Action
+        
+        if convert_to_dashed_name:
+            self.Name = self.Name.replace('_', '-')
 
-        self._validate_result()
+        if self.Required and self.Default is not None:
+            raise IncompetentDeveloperError("Found required option '%s' "
+                    "with default value '%s'. Required options cannot have "
+                    "default values." % (self.Name, self.Default))
+    
+        if self.Default is None:
+            if hasattr(self.Parameter, "Default"):
+                self.Default = self.Parameter.Default
+                self.DefaultDescription = self.Parameter.DefaultDescription 
 
-    def _validate_result(self):
-        """Validate a result object"""
-        raise NotImplementedError("Must implement in a subclass")
+        # If a parameter is required, the option is always required, but
+        # if a parameter is not required, but the option does require it,
+        # then we make the option required.
+        if hasattr(self.Parameter, "Required"):
+            if not self.Parameter.Required and Required:
+                self.Required = True
+
+        self._validate_option()
+
+class InterfaceOutputOption(InterfaceOption):
+    def __init__(self, InputName=None, **kwargs):
+        super(InterfaceOutputOption, self).__init__(**kwargs)
+
+        self.InputName = InputName
 
 class InterfaceUsageExample(object): 
     """Provide structure to a usage example"""
