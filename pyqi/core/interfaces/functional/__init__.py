@@ -46,6 +46,10 @@ class Functional(Interface):
         args = list(args)
         args.insert(0, in_)
 
+        if len(args) != len(interface_ins):
+            raise ValueError("Have %d arguments but expect %d!" % (len(args), 
+                                    len(interface_ins)))
+
         for interface_in, input_ in izip(interface_ins, args):
             if not isinstance(input_, interface_in.Type):
                 raise ValueError("Input %s doesn't appear to be the correct"\
