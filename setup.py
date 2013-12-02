@@ -8,14 +8,8 @@
 # The full license is in the file COPYING.txt, distributed with this software.
 #-----------------------------------------------------------------------------
 
-__author__ = "Greg Caporaso"
-__copyright__ = "Copyright 2013, The pyqi project"
 __credits__ = ["Rob Knight", "Greg Caporaso", "Jai Ram Rideout",
                "Daniel McDonald", "Doug Wendel"]
-__license__ = "BSD"
-__version__ = "0.2.0-dev"
-__maintainer__ = "Greg Caporaso"
-__email__ = "gregcaporaso@gmail.com"
 
 from distutils.core import setup
 from glob import glob
@@ -62,10 +56,6 @@ setup(name='pyqi',
       license=__license__,
       description='pyqi: expose your interface',
       long_description=long_description,
-      author=__maintainer__,
-      author_email=__email__,
-      maintainer=__maintainer__,
-      maintainer_email=__email__,
       url='http://bipy.github.io/pyqi',
       packages=['pyqi',
                 'pyqi/commands',

@@ -9,13 +9,7 @@ from __future__ import division
 # The full license is in the file COPYING.txt, distributed with this software.
 #-----------------------------------------------------------------------------
 
-__author__ = "Jai Ram Rideout"
-__copyright__ = "Copyright 2013, The pyqi project"
 __credits__ = ["Jai Ram Rideout"]
-__license__ = "BSD"
-__version__ = "0.2.0-dev"
-__maintainer__ = "Jai Ram Rideout"
-__email__ = "jai.rideout@gmail.com"
 
 from unittest import TestCase, main
 from pyqi.commands.make_command import MakeCommand
@@ -27,9 +21,7 @@ class MakeCommandTests(TestCase):
 
     def test_run_command_code_generation(self):
         """Correctly generates stubbed out Command code."""
-        obs = self.cmd(name='Test', author='bob', email='bob@bob.bob',
-                       license='very permissive license',
-                       copyright='what\'s that?', version='1.0')
+        obs = self.cmd(name='Test', credits=['bob'])
         self.assertEqual(obs.keys(), ['result'])
 
         obs = obs['result']
@@ -37,10 +29,8 @@ class MakeCommandTests(TestCase):
 
     def test_run_test_code_generation(self):
         """Correctly generates stubbed out unit test code."""
-        obs = self.cmd(name='Test', author='bob', email='bob@bob.bob',
-                       license='very permissive license',
-                       copyright='what\'s that?', version='1.0',
-                       credits=['another person'], test_code=True)
+        obs = self.cmd(name='Test', credits=['bob', 'another person'],
+            test_code=True)
         self.assertEqual(obs.keys(), ['result'])
 
         obs = obs['result']
@@ -50,13 +40,7 @@ class MakeCommandTests(TestCase):
 exp_command_code1 = """#!/usr/bin/env python
 from __future__ import division
 
-__author__ = "bob"
-__copyright__ = "what's that?"
 __credits__ = ["bob"]
-__license__ = "very permissive license"
-__version__ = "1.0"
-__maintainer__ = "bob"
-__email__ = "bob@bob.bob"
 
 from pyqi.core.command import (Command, CommandIn, CommandOut, 
     ParameterCollection)
@@ -88,13 +72,7 @@ CommandConstructor = Test"""
 exp_test_code1 = """#!/usr/bin/env python
 from __future__ import division
 
-__author__ = "bob"
-__copyright__ = "what's that?"
 __credits__ = ["bob", "another person"]
-__license__ = "very permissive license"
-__version__ = "1.0"
-__maintainer__ = "bob"
-__email__ = "bob@bob.bob"
 
 from unittest import TestCase, main
 from FILL IN MODULE PATH import Test

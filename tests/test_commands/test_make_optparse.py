@@ -9,17 +9,14 @@
 #-----------------------------------------------------------------------------
 
 from __future__ import division
-from pyqi.commands.make_optparse import MakeOptparse
-from pyqi.core.command import CommandIn, ParameterCollection
+
 from unittest import TestCase, main
 
-__author__ = "Daniel McDonald"
-__copyright__ = "Copyright 2013, The pyqi project"
-__credits__ = ["Daniel McDonald", "Jai Ram Rideout", "Doug Wendel", "Greg Caporaso"]
-__license__ = "BSD"
-__version__ = "0.2.0-dev"
-__maintainer__ = "Daniel McDonald"
-__email__ = "mcdonadt@colorado.edu"
+from pyqi.commands.make_optparse import MakeOptparse
+from pyqi.core.command import CommandIn, ParameterCollection
+
+__credits__ = ["Daniel McDonald", "Jai Ram Rideout", "Doug Wendel",
+    "Greg Caporaso"]
 
 class MakeOptparseTests(TestCase):
     def setUp(self):
@@ -38,11 +35,7 @@ class MakeOptparseTests(TestCase):
 
         obs = self.cmd(**{'command_module':'foobar',
                           'command':stubby(),
-                          'author': 'bob',
-                          'email': 'bob@bob.bob',
-                          'license': 'very permissive license',
-                          'copyright': 'what\'s that?',
-                          'version': '1.0'
+                          'credits':['bob']
         })
         
         self.assertEqual(obs['result'], exp.splitlines())
@@ -50,13 +43,7 @@ class MakeOptparseTests(TestCase):
 win_text = """#!/usr/bin/env python
 from __future__ import division
 
-__author__ = "bob"
-__copyright__ = "what's that?"
 __credits__ = ["bob"]
-__license__ = "very permissive license"
-__version__ = "1.0"
-__maintainer__ = "bob"
-__email__ = "bob@bob.bob"
 
 from pyqi.core.interfaces.optparse import (OptparseUsageExample,
                                            OptparseOption, OptparseResult)

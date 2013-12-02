@@ -9,13 +9,7 @@ from __future__ import division
 # The full license is in the file COPYING.txt, distributed with this software.
 #-----------------------------------------------------------------------------
 
-__author__ = "Jai Ram Rideout"
-__copyright__ = "Copyright 2013, The pyqi project"
-__credits__ = ["Jai Ram Rideout"]
-__license__ = "BSD"
-__version__ = "0.2.0-dev"
-__maintainer__ = "Jai Ram Rideout"
-__email__ = "jai.rideout@gmail.com"
+__credits__ = ["Jai Ram Rideout", "Adam Robbins-Pianka"]
 
 from unittest import TestCase, main
 from pyqi.commands.code_header_generator import CodeHeaderGenerator
@@ -27,19 +21,15 @@ class CodeHeaderGeneratorTests(TestCase):
 
     def test_run(self):
         """Correctly generates header with and without credits."""
-        obs = self.cmd(author='bob', email='bob@bob.bob',
-                       license='very permissive license',
-                       copyright='what\'s that?', version='1.0')
+        obs = self.cmd(credits=['bob'])
         self.assertEqual(obs.keys(), ['result'])
 
         obs = obs['result']
         self.assertEqual('\n'.join(obs), exp_header1)
 
-        # With credits.
-        obs = self.cmd(author='bob', email='bob@bob.bob',
-                       license='very permissive license',
-                       copyright='what\'s that?', version='1.0',
-                       credits=['another person', 'another another person'])
+        # With more than 1 credit.
+        obs = self.cmd(credits=['bob', 'another person',
+            'another another person'])
         self.assertEqual(obs.keys(), ['result'])
 
         obs = obs['result']
@@ -49,25 +39,13 @@ class CodeHeaderGeneratorTests(TestCase):
 exp_header1 = """#!/usr/bin/env python
 from __future__ import division
 
-__author__ = "bob"
-__copyright__ = "what's that?"
 __credits__ = ["bob"]
-__license__ = "very permissive license"
-__version__ = "1.0"
-__maintainer__ = "bob"
-__email__ = "bob@bob.bob"
 """
 
 exp_header2 = """#!/usr/bin/env python
 from __future__ import division
 
-__author__ = "bob"
-__copyright__ = "what's that?"
 __credits__ = ["bob", "another person", "another another person"]
-__license__ = "very permissive license"
-__version__ = "1.0"
-__maintainer__ = "bob"
-__email__ = "bob@bob.bob"
 """
 
 
