@@ -14,14 +14,8 @@ from pyqi.core.command import (Command, CommandIn, CommandOut,
     ParameterCollection)
 from pyqi.commands.code_header_generator import CodeHeaderGenerator
 
-__author__ = "Daniel McDonald"
-__copyright__ = "Copyright 2013, The pyqi project"
 __credits__ = ["Daniel McDonald", "Jai Ram Rideout", "Greg Caporaso",
                "Doug Wendel"]
-__license__ = "BSD"
-__version__ = "0.2.0-dev"
-__maintainer__ = "Daniel McDonald"
-__email__ = "mcdonadt@colorado.edu"
 
 header_format = """from pyqi.core.interfaces.optparse import (OptparseUsageExample,
                                            OptparseOption, OptparseResult)
@@ -135,9 +129,7 @@ class MakeOptparse(CodeHeaderGenerator):
 
     def run(self, **kwargs):
         code_header_lines = super(MakeOptparse, self).run(
-                author=kwargs['author'], email=kwargs['email'],
-                license=kwargs['license'], copyright=kwargs['copyright'],
-                version=kwargs['version'], credits=kwargs['credits'])['result']
+                credits=kwargs['credits'])['result']
 
         result_lines = code_header_lines
 

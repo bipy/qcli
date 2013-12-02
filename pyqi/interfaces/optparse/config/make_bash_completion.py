@@ -8,13 +8,8 @@
 # The full license is in the file COPYING.txt, distributed with this software.
 #-----------------------------------------------------------------------------
 
-__author__ = "Daniel McDonald"
-__copyright__ = "Copyright 2013, The pyqi project"
-__credits__ = ["Daniel McDonald", "Jai Ram Rideout", "Doug Wendel", "Greg Caporaso"]
-__license__ = "BSD"
-__version__ = "0.2.0-dev"
-__maintainer__ = "Daniel McDonald"
-__email__ = "mcdonadt@colorado.edu"
+__credits__ = ["Daniel McDonald", "Jai Ram Rideout", "Doug Wendel",
+    "Greg Caporaso"]
 
 from pyqi.core.interfaces.optparse import (OptparseOption,
                                            OptparseUsageExample,
@@ -29,8 +24,9 @@ cmd_out_lookup = make_command_out_collection_lookup_f(CommandConstructor)
 
 usage_examples = [
     OptparseUsageExample(ShortDesc="Create a bash completion script",
-                         LongDesc="Create a bash completion script for use with a pyqi driver",
-                         Ex="%prog --command-config-module pyqi.interfaces.optparse.config --driver-name pyqi -o ~/.bash_completion.d/pyqi")
+        LongDesc="Create a bash completion script for use with a pyqi driver",
+        Ex="%prog --command-config-module pyqi.interfaces.optparse.config "
+            "--driver-name pyqi -o ~/.bash_completion.d/pyqi")
 ]
 
 inputs = [

@@ -9,13 +9,7 @@ from __future__ import division
 # The full license is in the file COPYING.txt, distributed with this software.
 #-----------------------------------------------------------------------------
 
-__author__ = "Jai Ram Rideout"
-__copyright__ = "Copyright 2013, The pyqi project"
-__credits__ = ["Jai Ram Rideout", "Daniel McDonald"]
-__license__ = "BSD"
-__version__ = "0.2.0-dev"
-__maintainer__ = "Jai Ram Rideout"
-__email__ = "jai.rideout@gmail.com"
+__credits__ = ["Jai Ram Rideout", "Daniel McDonald", "Adam Robbins-Pianka"]
 
 from pyqi.core.command import (Command, CommandIn, CommandOut, 
     ParameterCollection)
@@ -23,13 +17,7 @@ from pyqi.core.command import (Command, CommandIn, CommandOut,
 header_format = """#!/usr/bin/env python
 from __future__ import division
 
-__author__ = "%(author)s"
-__copyright__ = "%(copyright)s"
 __credits__ = [%(credits)s]
-__license__ = "%(license)s"
-__version__ = "%(version)s"
-__maintainer__ = "%(author)s"
-__email__ = "%(email)s"
 """
 
 class CodeHeaderGenerator(Command):
@@ -40,20 +28,9 @@ class CodeHeaderGenerator(Command):
                        "the top of a Python file.")
 
     CommandIns = ParameterCollection([
-        CommandIn(Name='author', DataType=str,
-                  Description='author/maintainer name', Required=True),
-        CommandIn(Name='email', DataType=str,
-                  Description='maintainer email address', Required=True),
-        CommandIn(Name='license', DataType=str,
-                  Description='license (e.g., BSD)', Required=True),
-        CommandIn(Name='copyright', DataType=str,
-                  Description='copyright (e.g., Copyright 2013, The pyqi '
-                              'project)', Required=True),
-        CommandIn(Name='version', DataType=str,
-                  Description='version (e.g., 0.1)', Required=True),
         CommandIn(Name='credits', DataType=list,
-                  Description='list of other authors',
-                  Required=False, Default=None)
+                  Description='list of authors',
+                  Required=True, Default=None)
     ])
 
     CommandOuts = ParameterCollection([
@@ -63,18 +40,13 @@ class CodeHeaderGenerator(Command):
     def run(self, **kwargs):
         # Build a string formatting dictionary for the file header.
         head = {}
-        head['author']    = kwargs['author']
-        head['email']     = kwargs['email']
-        head['license']   = kwargs['license']
-        head['copyright'] = kwargs['copyright']
-        head['version']   = kwargs['version']
 
-        # Credits always includes author.
-        credits = [head['author']]
-        if kwargs['credits']:
-            credits.extend(kwargs['credits'])
+        credits = kwargs['credits']
 
-        f = lambda x: '"%s"' % x
+        def f(x):
+            """Returns a double-quoted version of input"""
+            return '"%s"' % x
+
         head['credits'] = ', '.join(map(f, credits))
 
         return {'result': (header_format % head).split('\n')}

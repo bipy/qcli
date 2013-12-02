@@ -8,14 +8,8 @@
 # The full license is in the file COPYING.txt, distributed with this software.
 #-----------------------------------------------------------------------------
 
-__author__ = "Daniel McDonald"
-__copyright__ = "Copyright 2013, The pyqi project"
 __credits__ = ["Daniel McDonald", "Greg Caporaso", "Doug Wendel",
                "Jai Ram Rideout"]
-__license__ = "BSD"
-__version__ = "0.2.0-dev"
-__maintainer__ = "Daniel McDonald"
-__email__ = "mcdonadt@colorado.edu"
 
 from pyqi.core.command import (Command, CommandIn, CommandOut, 
     ParameterCollection)
@@ -83,9 +77,7 @@ class MakeCommand(CodeHeaderGenerator):
 
     def run(self, **kwargs):
         code_header_lines = super(MakeCommand, self).run(
-                author=kwargs['author'], email=kwargs['email'],
-                license=kwargs['license'], copyright=kwargs['copyright'],
-                version=kwargs['version'], credits=kwargs['credits'])['result']
+                credits=kwargs['credits'])['result']
 
         result_lines = code_header_lines
 

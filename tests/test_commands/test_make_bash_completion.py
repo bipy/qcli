@@ -18,14 +18,8 @@ from unittest import TestCase, main
 import pyqi
 from pyqi.commands.make_bash_completion import BashCompletion, _get_cfg_module
 
-__author__ = "Daniel McDonald"
-__copyright__ = "Copyright 2013, The pyqi project"
 __credits__ = ["Daniel McDonald", "Jai Ram Rideout", "Doug Wendel",
                "Greg Caporaso"]
-__license__ = "BSD"
-__version__ = "0.2.0-dev"
-__maintainer__ = "Daniel McDonald"
-__email__ = "mcdonadt@colorado.edu"
 
 class BashCompletionTests(TestCase):
     def setUp(self):
@@ -105,7 +99,7 @@ outputandstuff = """_pyqi_complete()
         COMPREPLY=( $(compgen -W "--command-config-module --driver-name --output-fp" -- $cur) )
         ;;
        "make-optparse")
-        COMPREPLY=( $(compgen -W "--author --command --command-module --config-version --copyright --credits --email --license --output-fp" -- $cur) )
+        COMPREPLY=( $(compgen -W "--command --command-module --credits --output-fp" -- $cur) )
         ;;
 
       *)
