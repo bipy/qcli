@@ -1,6 +1,11 @@
 pyqi ChangeLog
 ==============
 
+pyqi 0.3.1-dev
+--------------
+
+* added an HDF5 implicit dataset extender
+
 pyqi 0.3.1
 ----------
 
