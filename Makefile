@@ -14,8 +14,11 @@ test:
 tox-test:
 	tox
 
-release:
-	python scripts/make-release.py
+release_test:
+	pyqi make-release --package-name=pyqi
+
+release_real:
+	pyqi make-release --package-name=pyqi --real-run
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
