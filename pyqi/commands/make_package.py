@@ -12,6 +12,7 @@ import os
 from pyqi import __version__  # note, pyqi has not been vermanized
 from pyqi.core.command import (Command, CommandIn, ParameterCollection)
 from pyqi.util import pyqi_system_call
+from sphinx.quickstart import generate
 
 PKG_INIT = """#!/usr/bin/env python
 
@@ -268,6 +269,30 @@ class MakePackage(Command):
         write_file('scripts/%s' % pkg_name, payload)
         os.chmod('scripts/%s' % pkg_name, 0755)
 
+    def _create_sphinx(self, kwargs):
+        d = {'path': 'doc',
+             'sep': False,
+             'dot': '_',
+             'project': kwargs['pkg_name'],
+             'version': '0.1',
+             'author': kwargs['author'],
+             'release': '-dev',
+             'suffix': '.rst',
+             'master': 'index',
+             'epub': False,
+             'ext_autodoc': True,
+             'ext_doctest': True,
+             'ext_intersphinx': True,
+             'ext_todo': False,
+             'ext_viewcode': True,
+             'ext_coverage': False,
+             'ext_pngmath': False,
+             'ext_mathjax': False,
+             'ext_ifconfig': False,
+             'makefile': True,
+             'batchfile': False}
+        generate(d, silent=True)
+
     def _create_git(self):
         init_cmd = ['git', 'init', '--quiet']
         add_cmd = ['git', 'add', '*']
@@ -297,6 +322,7 @@ class MakePackage(Command):
         for fname, formatted_str in self._formatted_base_writes:
             write_file(fname, formatted_str % kwargs)
 
+        self._create_sphinx(kwargs)
         self._create_git()
 
         os.chdir(cwd)
