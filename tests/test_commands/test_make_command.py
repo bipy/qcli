@@ -14,6 +14,7 @@ __credits__ = ["Jai Ram Rideout"]
 from unittest import TestCase, main
 from pyqi.commands.make_command import MakeCommand
 
+
 class MakeCommandTests(TestCase):
     def setUp(self):
         """Set up a MakeCommand instance to use in the tests."""
@@ -52,7 +53,7 @@ __version__ = "1.0"
 __maintainer__ = "bob"
 __email__ = "bob@bob.bob"
 
-from pyqi.core.command import (Command, CommandIn, CommandOut, 
+from pyqi.core.command import (Command, CommandIn, CommandOut,
     ParameterCollection)
 
 class Test(Command):

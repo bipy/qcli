@@ -11,8 +11,9 @@ from __future__ import division
 
 __credits__ = ["Jai Ram Rideout", "Daniel McDonald"]
 
-from pyqi.core.command import (Command, CommandIn, CommandOut, 
-    ParameterCollection)
+from pyqi.core.command import (Command, CommandIn, CommandOut,
+                               ParameterCollection)
+
 
 class CodeHeaderGenerator(Command):
     BriefDescription = "Generate header code for use in a Python file"

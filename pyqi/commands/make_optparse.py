@@ -10,8 +10,8 @@
 
 from __future__ import division
 from operator import attrgetter
-from pyqi.core.command import (Command, CommandIn, CommandOut, 
-    ParameterCollection)
+from pyqi.core.command import (Command, CommandIn, CommandOut,
+                               ParameterCollection)
 from pyqi.commands.code_header_generator import CodeHeaderGenerator
 
 __credits__ = ["Daniel McDonald", "Jai Ram Rideout", "Greg Caporaso",
@@ -81,7 +81,7 @@ outputs = [
     #                # value will be made available to Handler. This name
     #                # can be either an underscored or dashed version of the
     #                # option name (e.g., 'output_fp' or 'output-fp')
-    #                InputName='output-fp'), 
+    #                InputName='output-fp'),
     #
     # An example option that does not map to a CommandIn.
     # OptparseResult(Parameter=cmd_out_lookup('some_other_result'),
@@ -109,16 +109,19 @@ output_format = """    OptparseResult(Parameter=cmd_out_lookup('%(name)s'),
 default_block_format = """# Default=%(default)s, # implied by Parameter
                    # DefaultDescription=%(default_description)s, # implied by Parameter"""
 
+
 class MakeOptparse(CodeHeaderGenerator):
     BriefDescription = "Consume a Command, stub out an optparse configuration"
-    LongDescription = """Construct and stub out the basic optparse configuration for a given Command. This template provides comments and examples of what to fill in."""
-    
+    LongDescription = "Construct and stub out the basic optparse "\
+                      "configuration for a given Command. This template "\
+                      "provides comments and examples of what to fill in."
+
     CommandIns = ParameterCollection(
         CodeHeaderGenerator.CommandIns.Parameters + [
-        CommandIn(Name='command', DataType=Command,
-                  Description='an existing Command', Required=True),
-        CommandIn(Name='command_module', DataType=str,
-                  Description='the Command source module', Required=True)
+            CommandIn(Name='command', DataType=Command,
+                      Description='an existing Command', Required=True),
+            CommandIn(Name='command_module', DataType=str,
+                      Description='the Command source module', Required=True)
         ]
     )
 
@@ -129,9 +132,9 @@ class MakeOptparse(CodeHeaderGenerator):
 
     def run(self, **kwargs):
         code_header_lines = super(MakeOptparse, self).run(
-                author=kwargs['author'], email=kwargs['email'],
-                license=kwargs['license'], copyright=kwargs['copyright'],
-                version=kwargs['version'], credits=kwargs['credits'])['result']
+            author=kwargs['author'], email=kwargs['email'],
+            license=kwargs['license'], copyright=kwargs['copyright'],
+            version=kwargs['version'], credits=kwargs['credits'])['result']
 
         result_lines = code_header_lines
 
@@ -143,8 +146,8 @@ class MakeOptparse(CodeHeaderGenerator):
                 default_block = ''
             else:
                 default_fmt = {
-                        'default': repr(cmdin.Default),
-                        'default_description': repr(cmdin.DefaultDescription)
+                    'default': repr(cmdin.Default),
+                    'default_description': repr(cmdin.DefaultDescription)
                 }
                 default_block = default_block_format % default_fmt
 
@@ -155,23 +158,22 @@ class MakeOptparse(CodeHeaderGenerator):
                 action = 'store'
                 data_type = cmdin.DataType
 
-            fmt = {'name':cmdin.Name, 'datatype':data_type, 'action':action,
-                   'required':str(cmdin.Required),
-                   'help':cmdin.Description, 'default_block':default_block}
+            fmt = {'name': cmdin.Name, 'datatype': data_type, 'action': action,
+                   'required': str(cmdin.Required),
+                   'help': cmdin.Description, 'default_block': default_block}
             cmdin_formatted.append(input_format % fmt)
 
         cmdout_formatted = []
         for cmdin in sorted(kwargs['command'].CommandOuts.values(),
                             key=attrgetter('Name')):
-            fmt = {'name':cmdin.Name}
+            fmt = {'name': cmdin.Name}
             cmdout_formatted.append(output_format % fmt)
-
 
         cmdin_formatted = ''.join(cmdin_formatted)
         cmdout_formatted = ''.join(cmdout_formatted)
-        header_fmt = {'command_module':kwargs['command_module'],
+        header_fmt = {'command_module': kwargs['command_module'],
                       'input_fmt': cmdin_formatted,
-                      'output_fmt':cmdout_formatted}
+                      'output_fmt': cmdout_formatted}
 
         result_lines.extend((header_format % header_fmt).split('\n'))
         return {'result': result_lines}

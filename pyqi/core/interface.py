@@ -13,10 +13,11 @@ __credits__ = ["Greg Caporaso", "Daniel McDonald", "Doug Wendel",
 
 import importlib
 from sys import exit, stderr
-from ConfigParser import SafeConfigParser
 from glob import glob
-from os.path import basename, dirname, expanduser, join
+from os.path import basename, dirname, join
+
 from pyqi.core.exception import IncompetentDeveloperError
+
 
 class Interface(object):
     CommandConstructor = None
@@ -33,7 +34,7 @@ class Interface(object):
 
         self._validate_usage_examples(self._get_usage_examples())
         self._validate_inputs_outputs(self._get_inputs(), self._get_outputs())
-    
+
     def __call__(self, in_, *args, **kwargs):
         self._the_in_validator(in_)
         cmd_input = self._input_handler(in_, *args, **kwargs)
@@ -79,10 +80,10 @@ class Interface(object):
         for ifout in outputs:
             if ifout.InputName is None:
                 continue
-            
+
             if ifout.InputName not in input_names:
-                raise IncompetentDeveloperError(\
-                        "Could not link %s to an input!" % ifout.InputName)
+                raise IncompetentDeveloperError(
+                    "Could not link %s to an input!" % ifout.InputName)
 
     def _the_in_validator(self, in_):
         """The job securator"""
@@ -104,7 +105,7 @@ class Interface(object):
 
     def _get_usage_examples(self):
         """Return a list of ``InterfaceUsageExample`` objects
-        
+
         These are typically set in a command+interface specific configuration
         file and passed to ``pyqi.core.general_factory``
         """
@@ -112,7 +113,7 @@ class Interface(object):
 
     def _get_inputs(self):
         """Return a list of ``InterfaceOption`` objects
-        
+
         These are typically set in a command+interface specific configuration
         file and passed to ``pyqi.core.general_factory``
         """
@@ -120,7 +121,7 @@ class Interface(object):
 
     def _get_outputs(self):
         """Return a list of ``InterfaceOutputOption`` objects
-        
+
         These are typically set in a command+interface specific configuration
         file and passed to ``pyqi.core.general_factory``
         """
@@ -128,33 +129,37 @@ class Interface(object):
 
     def _get_version(self):
         """Return a version string, e.g., ``'0.1'``
-        
+
         This is typically set in a command+interface specific configuration
         file and passed to ``pyqi.core.general_factory``
         """
         raise NotImplementedError("Must define _get_version")
 
+
 class InterfaceOption(object):
+
     """Describes an option and what to do with it
-    
-    ``Parameter`` is a pyqi.core.command.Parameter instance, typically an 
+
+    ``Parameter`` is a pyqi.core.command.Parameter instance, typically an
         instance of a ``CommandIn`` or a ``CommandOut``.
     ``Type`` refers to the interface type, not the actually datatype of the
         ``Parameter``. For instance, a file path may be specified on a command
-        line interface for a BIOM table. The ``Parameter.Datatype`` is a BIOM 
-        type, while the ``InterfaceOption.Type`` is a string or possibly a 
+        line interface for a BIOM table. The ``Parameter.Datatype`` is a BIOM
+        type, while the ``InterfaceOption.Type`` is a string or possibly a
         ``FilePath`` object.
-    ``Handler`` is a function that either transforms the value associated with 
+    ``Handler`` is a function that either transforms the value associated with
         the option into the ``Parameter.DataType`` (e.g., if ``Parameter`` is a
-        ``CommandIn``), or the result of a ``Command`` into something consumable
-        by the interface (e.g., if ``Parameter`` is a ``CommandOut``).
+        ``CommandIn``), or the result of a ``Command`` into something
+        consumable by the interface (e.g., if ``Parameter`` is a
+        ``CommandOut``).
     ``Name`` is the name of the ``InterfaceOption``, e.g,, 'input-fp'
     ``Help`` is a description of the ``InterfaceOption``
     """
+
     def __init__(self, Parameter=None, Type=None, Handler=None, Name=None,
                  Help=None):
         self.Parameter = Parameter
-        
+
         if self.Parameter is None:
             if Name is None:
                 raise IncompetentDeveloperError("Must specify a Name for the "
@@ -171,8 +176,8 @@ class InterfaceOption(object):
             # Transfer information from Parameter unless overridden here.
             self.Name = Parameter.Name if Name is None else Name
             self.Help = Parameter.Description if Help is None else Help
-            
-        # This information is never contained in a Parameter. 
+
+        # This information is never contained in a Parameter.
         self.Type = Type
         self.Handler = Handler
 
@@ -185,6 +190,7 @@ class InterfaceOption(object):
             return None
         else:
             return self.Parameter.Name
+
 
 class InterfaceInputOption(InterfaceOption):
     _primitive_mapping = {
@@ -203,8 +209,8 @@ class InterfaceInputOption(InterfaceOption):
         "frozenset": frozenset
     }
 
-    def __init__(self, Action=None, Required=False, Default=None, 
-                 ShortName=None, DefaultDescription=None, 
+    def __init__(self, Action=None, Required=False, Default=None,
+                 ShortName=None, DefaultDescription=None,
                  convert_to_dashed_name=True, **kwargs):
         super(InterfaceInputOption, self).__init__(**kwargs)
 
@@ -213,44 +219,52 @@ class InterfaceInputOption(InterfaceOption):
         self.DefaultDescription = DefaultDescription
         self.ShortName = ShortName
         self.Action = Action
-        
+
         if convert_to_dashed_name:
             self.Name = self.Name.replace('_', '-')
 
         if self.Required and self.Default is not None:
             raise IncompetentDeveloperError("Found required option '%s' "
-                    "with default value '%s'. Required options cannot have "
-                    "default values." % (self.Name, self.Default))
-    
+                                            "with default value '%s'. "
+                                            "Required options cannot have "
+                                            "default values." %
+                                            (self.Name, self.Default))
+
         if self.Default is None and self.Parameter is not None:
             self.Default = self.Parameter.Default
-            self.DefaultDescription = self.Parameter.DefaultDescription 
+            self.DefaultDescription = self.Parameter.DefaultDescription
 
         # If a parameter is required, the option is always required, but
         # if a parameter is not required, but the option does require it,
         # then we make the option required.
-        if self.Parameter is not None: 
+        if self.Parameter is not None:
             self.Required = self.Parameter.Required
 
             if not self.Parameter.Required and Required:
                 self.Required = True
-        
+
         self._convert_primitive_strings()
         self._validate_option()
 
     def _convert_primitive_strings(self):
-        """Convert our Type to a python type object if it is a primitive string.
+        """Convert our Type to a python type if possible
+
            Otherwise, leave unchanged"""
         self.Type = self._primitive_mapping.get(self.Type, self.Type)
 
+
 class InterfaceOutputOption(InterfaceOption):
+
     def __init__(self, InputName=None, **kwargs):
         super(InterfaceOutputOption, self).__init__(**kwargs)
 
         self.InputName = InputName
 
-class InterfaceUsageExample(object): 
+
+class InterfaceUsageExample(object):
+
     """Provide structure to a usage example"""
+
     def __init__(self, ShortDesc, LongDesc, Ex):
         self.ShortDesc = ShortDesc
         self.LongDesc = LongDesc
@@ -261,6 +275,7 @@ class InterfaceUsageExample(object):
     def _validate_usage_example(self):
         """Interface specific usage example validation"""
         raise NotImplementedError("Must define in the subclass")
+
 
 def get_command_names(config_base_name):
     """Return a list of available command names.
@@ -278,7 +293,8 @@ def get_command_names(config_base_name):
 
     config_base_dir = dirname(config_base_module.__file__)
 
-    # from http://stackoverflow.com/questions/1057431/loading-all-modules-in-a-folder-in-python
+    # from
+    # http://stackoverflow.com/questions/1057431/loading-all-modules-in-a-folder-in-python
     command_names = CommandList()
     for f in glob(join(config_base_dir, '*.py')):
         command_name = basename(f)
@@ -288,6 +304,7 @@ def get_command_names(config_base_name):
     command_names.sort()
 
     return command_names
+
 
 def get_command_config(command_config_module, cmd, exit_on_failure=True):
     """Get the configuration for a ``Command``"""
@@ -310,7 +327,9 @@ def get_command_config(command_config_module, cmd, exit_on_failure=True):
 
     return cmd_cfg, error_msg
 
+
 class CommandList(list):
+
     def __init__(self):
         super(CommandList, self).__init__()
 
