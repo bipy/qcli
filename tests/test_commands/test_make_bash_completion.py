@@ -21,6 +21,7 @@ from pyqi.commands.make_bash_completion import BashCompletion, _get_cfg_module
 __credits__ = ["Daniel McDonald", "Jai Ram Rideout", "Doug Wendel",
                "Greg Caporaso"]
 
+
 class BashCompletionTests(TestCase):
     def setUp(self):
         """Set up data for unit tests."""
@@ -72,8 +73,8 @@ class BashCompletionTests(TestCase):
         self.assertEqual(_get_cfg_module('pyqi'), pyqi)
 
     def test_run(self):
-        params = {'command_config_module':self.temp_module_name,
-                  'driver_name':'pyqi'}
+        params = {'command_config_module': self.temp_module_name,
+                  'driver_name': 'pyqi'}
         obs = self.cmd(**params)
         self.assertEqual(obs.keys(), ['result'])
         self.assertEqual(obs['result'], outputandstuff)
@@ -89,7 +90,7 @@ outputandstuff = """_pyqi_complete()
 
   if [ $COMP_CWORD -gt 1 ]; then
     prev=${COMP_WORDS[1]}
-  fi  
+  fi
 
   if [ $COMP_CWORD -eq 1 ]; then
     COMPREPLY=( $(compgen -W "make-bash-completion make-optparse" -- $cur) )
