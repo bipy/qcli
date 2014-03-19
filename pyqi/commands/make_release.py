@@ -29,21 +29,22 @@ import os
 import re
 from datetime import datetime, date
 from pyqi.util import pyqi_system_call
-from pyqi.core.command import (Command, CommandIn, CommandOut, 
-    ParameterCollection)
+from pyqi.core.command import (Command, CommandIn, CommandOut,
+                               ParameterCollection)
+
 
 class MakeRelease(Command):
     BriefDescription = "Make the release"
     LongDescription = "Do all the things for a release"
     CommandIns = ParameterCollection([
         CommandIn(Name='package_name', DataType=str,
-                  Description='The name of the package to release', 
+                  Description='The name of the package to release',
                   Required=True),
-        CommandIn(Name='real_run', DataType=bool, 
+        CommandIn(Name='real_run', DataType=bool,
                   Description='Perform a real run', Required=False,
                   Default=False)
     ])
-    
+
     CommandOuts = ParameterCollection([])
     RealRun = False
     _date_clean_re = re.compile(r'(\d+)(st|nd|rd|th)')
@@ -65,7 +66,7 @@ class MakeRelease(Command):
                         break
 
                 match = re.search(r'released on (\w+\s+\d+\w+\s+\d+)',
-                    change_info)
+                                  change_info)
                 if match is None:
                     continue
 
@@ -84,15 +85,17 @@ class MakeRelease(Command):
         string = self._date_clean_re.sub(r'\1', string)
         return datetime.strptime(string, '%B %d %Y')
 
-    def _set_filename_version(self,filename,version_number,pattern):
+    def _set_filename_version(self, filename, version_number, pattern):
         changed = []
+
         def inject_version(match):
             before, old, after = match.groups()
             changed.append(True)
             return before + version_number + after
         with open(filename) as f:
-            contents = re.sub(r"""^(\s*%s\s*=\s*(?:'|"))(.+?)((?:'|"))(?sm)""" % 
-                    pattern, inject_version, f.read())
+            contents = re.sub(
+                r"""^(\s*%s\s*=\s*(?:'|"))(.+?)((?:'|"))(?sm)""" %
+                pattern, inject_version, f.read())
 
         if not changed:
             self._fail('Could not find %s in %s', pattern, filename)
@@ -103,7 +106,7 @@ class MakeRelease(Command):
 
     def _set_init_version(self, pkg_name, version):
         self._info('Setting __init__.py version to %s', version)
-        self._set_filename_version('%s/__init__.py' % pkg_name, version, 
+        self._set_filename_version('%s/__init__.py' % pkg_name, version,
                                    '__version__')
 
     def _set_setup_version(self, version):
@@ -119,11 +122,11 @@ class MakeRelease(Command):
         stdout, stderr, retval = pyqi_system_call(cmd, shell=False,
                                                   dry_run=not self.RealRun)
         if retval is not 0:
-            self._fail("build and upload failed,\nSTDOUT:\n%s\n\nSTDERR:\n%s", 
+            self._fail("build and upload failed,\nSTDOUT:\n%s\n\nSTDERR:\n%s",
                        stdout, stderr)
 
     def _fail(self, message, *args):
-        sys.stderr.write('Error: ') 
+        sys.stderr.write('Error: ')
         sys.stderr.write(message % args)
         sys.stderr.write('\n')
         sys.exit(1)
@@ -137,13 +140,13 @@ class MakeRelease(Command):
         stdout, stderr, retval = pyqi_system_call(cmd, shell=False,
                                                   dry_run=not self.RealRun)
         if retval is not 0:
-            self._fail("Could not git tag, \nSTDOUT:\n%s\n\nSTDERR:\n%s", 
+            self._fail("Could not git tag, \nSTDOUT:\n%s\n\nSTDERR:\n%s",
                        stdout, stderr)
 
         return stdout.splitlines()
 
     def _git_is_clean(self):
-        cmd = ['git','diff','--quiet']
+        cmd = ['git', 'diff', '--quiet']
 
         # always execute, even in dry run
         stdout, stderr, retval = pyqi_system_call(cmd, shell=False)
@@ -155,7 +158,7 @@ class MakeRelease(Command):
         stdout, stderr, retval = pyqi_system_call(cmd, shell=False,
                                                   dry_run=not self.RealRun)
         if retval is not 0:
-            self._fail("Could not git commit, \nSTDOUT:\n%s\n\nSTDERR:\n%s", 
+            self._fail("Could not git commit, \nSTDOUT:\n%s\n\nSTDERR:\n%s",
                        stdout, stderr)
 
     def _make_git_tag(self, tag):
@@ -164,32 +167,35 @@ class MakeRelease(Command):
         stdout, stderr, retval = pyqi_system_call(cmd, shell=False,
                                                   dry_run=not self.RealRun)
         if retval is not 0:
-            self._fail("Could not git tag, \nSTDOUT:\n%s\n\nSTDERR:\n%s",stdout,
-                 stderr)
+            self._fail(
+                "Could not git tag, \nSTDOUT:\n%s\n\nSTDERR:\n%s", stdout,
+                stderr)
 
     def _get_git_branch(self):
-        cmd = ['git','rev-parse','--abbrev-ref','HEAD']
+        cmd = ['git', 'rev-parse', '--abbrev-ref', 'HEAD']
 
         # ignoring self.RealRun, always execute
         stdout, stderr, retval = pyqi_system_call(cmd, shell=False)
         if retval is not 0:
-            self._fail("Could not get git branch, \nSTDOUT:\n%s\n\nSTDERR:\n%s",
-                       stdout, stderr)
+            self._fail(
+                "Could not get git branch, \nSTDOUT:\n%s\n\nSTDERR:\n%s",
+                stdout, stderr)
         return stdout.strip()
 
     def _git_push_branch(self):
         branch = self._get_git_branch()
         self._info('Pushing branch %s to origin', branch)
-        cmd = ['git','push','upstream', branch]
+        cmd = ['git', 'push', 'upstream', branch]
         stdout, stderr, retval = pyqi_system_call(cmd, shell=False,
                                                   dry_run=not self.RealRun)
         if retval is not 0:
-            self._fail("Could not push branch %s, \nSTDOUT:\n%s\n\nSTDERR:\n%s",
-                       stdout, stderr, branch)
+            self._fail(
+                "Could not push branch %s, \nSTDOUT:\n%s\n\nSTDERR:\n%s",
+                stdout, stderr, branch)
 
     def _git_push_tag(self, tag):
         self._info('Pushing tag "%s"', tag)
-        cmd = ['git','push','upstream',tag]
+        cmd = ['git', 'push', 'upstream', tag]
         stdout, stderr, retval = pyqi_system_call(cmd, shell=False,
                                                   dry_run=not self.RealRun)
         if retval is not 0:
@@ -222,9 +228,9 @@ class MakeRelease(Command):
         if version in tags:
             self._fail('Version "%s" is already tagged', version)
         if release_date.date() != date.today():
-            self._fail('Release date is not today (%s != %s)', 
-                        release_date.strftime('%Y-%m-%d'),
-                        date.today())
+            self._fail('Release date is not today (%s != %s)',
+                       release_date.strftime('%Y-%m-%d'),
+                       date.today())
 
         if not self._git_is_clean():
             self._fail('You have uncommitted changes in git')
