@@ -26,9 +26,10 @@ __credits__ = ["Daniel McDonald", "Greg Caporaso", "Doug Wendel",
 from pyqi.core.exception import IncompetentDeveloperError
 import os
 
+
 def write_string(result_key, data, option_value=None):
     """Write a string to a file.
-    
+
     A newline will be added to the end of the file.
     """
     if option_value is None:
@@ -42,9 +43,10 @@ def write_string(result_key, data, option_value=None):
         f.write(data)
         f.write('\n')
 
+
 def write_list_of_strings(result_key, data, option_value=None):
     """Write a list of strings to a file, one per line.
-    
+
     A newline will be added to the end of the file.
     """
     if option_value is None:
@@ -59,6 +61,7 @@ def write_list_of_strings(result_key, data, option_value=None):
             f.write(line)
             f.write('\n')
 
+
 def print_list_of_strings(result_key, data, option_value=None):
     """Print a list of strings to stdout, one per line.
 
@@ -67,12 +70,14 @@ def print_list_of_strings(result_key, data, option_value=None):
     for line in data:
         print line
 
+
 def print_string(result_key, data, option_value=None):
     """Print the string
 
     A newline will be printed before the data"""
     print ""
     print data
+
 
 def write_or_print_string(result_key, data, option_value=None):
     """Write a string to a file.
@@ -85,6 +90,7 @@ def write_or_print_string(result_key, data, option_value=None):
     else:
         write_string(result_key, data, option_value)
 
+
 def write_or_print_list_of_strings(result_key, data, option_value=None):
     """Write a list of strings to a file, one per line.
 
@@ -95,4 +101,3 @@ def write_or_print_list_of_strings(result_key, data, option_value=None):
         print_list_of_strings(result_key, data, option_value)
     else:
         write_list_of_strings(result_key, data, option_value)
-
