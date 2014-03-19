@@ -15,10 +15,13 @@ from datetime import datetime
 __credits__ = ["Greg Caporaso", "Daniel McDonald", "Doug Wendel",
                "Jai Ram Rideout"]
 
+
 class InvalidLoggerError(Exception):
     pass
 
+
 class Logger(object):
+
     """Abstract logging interface"""
     DEBUG = 'DEBUG'
     INFO = 'INFO'
@@ -47,13 +50,13 @@ class Logger(object):
 
     def _debug(self, msg):
         raise NotImplementedError("All subclasses must implement debug.")
-    
+
     def _info(self, msg):
         raise NotImplementedError("All subclasses must implement info.")
-    
+
     def _warn(self, msg):
         raise NotImplementedError("All subclasses must implement warn.")
-    
+
     def _fatal(self, msg):
         raise NotImplementedError("All subclasses must implement fatal.")
 
@@ -69,19 +72,28 @@ class Logger(object):
         """Construct a logging line"""
         return '%s %s %s' % (self._get_timestamp(), level, msg)
 
+
 class NullLogger(Logger):
+
     """Ignore log messages"""
+
     def _debug(self, msg):
         pass
+
     def _info(self, msg):
         pass
+
     def _warn(self, msg):
         pass
+
     def _fatal(self, msg):
         pass
 
+
 class StdErrLogger(Logger):
+
     """Log messages directly to ``stderr``"""
+
     def _debug(self, msg):
         stderr.write(self._format_line(self.DEBUG, msg) + '\n')
 
