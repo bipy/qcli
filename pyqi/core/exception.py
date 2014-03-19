@@ -11,20 +11,26 @@
 __credits__ = ["Greg Caporaso", "Daniel McDonald", "Doug Wendel",
                "Jai Ram Rideout"]
 
+
 class CommandError(Exception):
     pass
+
 
 class IncompetentDeveloperError(CommandError):
     pass
 
+
 class MissingParameterError(CommandError):
     pass
+
 
 class InvalidReturnTypeError(IncompetentDeveloperError):
     pass
 
+
 class UnknownParameterError(IncompetentDeveloperError):
     pass
+
 
 class MissingVersionInfoError(IncompetentDeveloperError):
     pass
