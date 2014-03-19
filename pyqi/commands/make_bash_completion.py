@@ -11,19 +11,21 @@
 from __future__ import division
 
 __credits__ = ["Daniel McDonald", "Jai Ram Rideout", "Doug Wendel",
-    "Greg Caporaso"]
+               "Greg Caporaso"]
 
 import importlib
-from pyqi.core.command import (Command, CommandIn, CommandOut, 
-    ParameterCollection)
+from pyqi.core.command import (Command, CommandIn, CommandOut,
+                               ParameterCollection)
 from pyqi.core.interface import get_command_names, get_command_config
+
 
 def _get_cfg_module(desc):
     """Load a module"""
     mod = importlib.import_module(desc)
     return mod
 
-# Based on http://stackoverflow.com/questions/5302650/multi-level-bash-completion
+# Based on
+# http://stackoverflow.com/questions/5302650/multi-level-bash-completion
 script_fmt = """_%(driver)s_complete()
 {
   local cur prev
@@ -34,7 +36,7 @@ script_fmt = """_%(driver)s_complete()
 
   if [ $COMP_CWORD -gt 1 ]; then
     prev=${COMP_WORDS[1]}
-  fi  
+  fi
 
   if [ $COMP_CWORD -eq 1 ]; then
     COMPREPLY=( $(compgen -W "%(command_list)s" -- $cur) )
@@ -56,11 +58,12 @@ command_fmt = """       "%(command)s")
         ;;
 """
 
+
 class BashCompletion(Command):
     BriefDescription = "Construct a bash completion script"
-    LongDescription = ("Construct a bash tab completion script that will search"
-        " through available commands and options")
-    
+    LongDescription = ("Construct a bash tab completion script that will "
+                       "search through available commands and options")
+
     CommandIns = ParameterCollection([
         CommandIn(Name='command_config_module', DataType=str,
                   Description="CLI command configuration module",
@@ -77,7 +80,6 @@ class BashCompletion(Command):
     def run(self, **kwargs):
         driver = kwargs['driver_name']
         cfg_mod_path = kwargs['command_config_module']
-        cfg_mod = _get_cfg_module(cfg_mod_path)
         command_names = get_command_names(cfg_mod_path)
         command_list = ' '.join(command_names)
 
@@ -89,14 +91,15 @@ class BashCompletion(Command):
             if cmd_cfg is not None:
                 command_options = []
                 command_options.extend(
-                        sorted(['--%s' % p.Name for p in cmd_cfg.inputs]))
+                    sorted(['--%s' % p.Name for p in cmd_cfg.inputs]))
                 opts = ' '.join(command_options)
 
-                commands.append(command_fmt % {'command':cmd, 'options':opts})
+                commands.append(command_fmt %
+                                {'command': cmd, 'options': opts})
 
         all_commands = ''.join(commands)
-        return {'result':script_fmt % {'driver':driver,
-                                       'commands':all_commands,
-                                       'command_list':command_list}}
+        return {'result': script_fmt % {'driver': driver,
+                                        'commands': all_commands,
+                                        'command_list': command_list}}
 
 CommandConstructor = BashCompletion
