@@ -11,12 +11,20 @@ from __future__ import division
 
 __credits__ = ["Daniel McDonald"]
 
+import unittest
+
 from unittest import TestCase, main
 from os import remove
 from numpy import array, hstack
 from pyqi.core.hdf5 import AutoExtendHDF5
-import h5py
 
+try:
+    import h5py
+    h5py_missing = False
+except ImportError:
+    h5py_missing = True
+
+@unittest.skipIf(h5py_missing, "h5py is not present")
 class HDF5AutoExtendTests(TestCase):
     def setUp(self):
         self.hdf5_file = h5py.File('_test_file.hdf5','w')
@@ -80,9 +88,9 @@ class HDF5AutoExtendTests(TestCase):
         self.obj.extend(name, array([1,2,3]))
         self.obj.extend(name, array([1,2,3]))
         self.obj.extend(name, array([1,2,3]))
-        
+
         self.assertEqual(size(self.obj.f), 24)
-        exp = array([1,2,3,1,2,3,1,2,3,1,2,3,1,2,3,0,0,0,0,0,0,0,0,0]) 
+        exp = array([1,2,3,1,2,3,1,2,3,1,2,3,1,2,3,0,0,0,0,0,0,0,0,0])
         obs = fetch(self.obj.f)
         self.assertTrue((obs == exp).all())
 
@@ -90,7 +98,7 @@ class HDF5AutoExtendTests(TestCase):
         exp = array([1,2,3] * 5)
         obs = fetch(self.obj.f)
         self.assertTrue((obs == exp).all())
-        
+
         self.assertFalse('next_item' in self.obj.f[name].attrs)
 
 if __name__ == '__main__':
