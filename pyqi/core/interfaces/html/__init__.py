@@ -14,9 +14,6 @@ __credits__ = ["Evan Bolyen", "Jai Ram Rideout", "Daniel McDonald",
 import os
 import types
 import os.path
-<<<<<<< Updated upstream
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-=======
 import sys
 
 from pyqi.util import get_version_string, is_py2
@@ -26,7 +23,6 @@ if is_py2():
 else:
     from http.server import BaseHTTPRequestHandler, HTTPServer
 
->>>>>>> Stashed changes
 from cgi import parse_header, parse_multipart, parse_qs, FieldStorage
 from copy import copy
 from glob import glob
