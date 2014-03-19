@@ -5,6 +5,7 @@ pyqi 0.3.1-dev
 --------------
 
 * added an HDF5 implicit dataset extender
+* native python 3 support
 * painless profiling: just set the environment variable PYQI_PROFILE_COMMAND
 
 pyqi 0.3.1
