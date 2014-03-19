@@ -12,13 +12,15 @@ from __future__ import division
 
 __credits__ = ["Evan Bolyen"]
 
-from pyqi.core.command import (Command, CommandIn, CommandOut, ParameterCollection)
+from pyqi.core.command import (
+    Command, CommandIn, CommandOut, ParameterCollection)
 from pyqi.core.interfaces.html import start_server
+
 
 class ServeHTMLInterface(Command):
     BriefDescription = "Start the HTMLInterface server"
     LongDescription = ("Start the HTMLInterface server and load the provided "
-        "interface_module and port")
+                       "interface_module and port")
     CommandIns = ParameterCollection([
         CommandIn(Name='port', DataType=int,
                   Description='The port to run the server on', Required=False,
@@ -30,10 +32,10 @@ class ServeHTMLInterface(Command):
     ])
 
     CommandOuts = ParameterCollection([
-          CommandOut(Name='result',DataType=str, 
-                    Description='Signals the termination of the HTMLInterface '
-                                'server')
-          ])
+        CommandOut(Name='result', DataType=str,
+                   Description='Signals the termination of the HTMLInterface '
+                   'server')
+    ])
 
     def run(self, **kwargs):
         """Start the HTMLInterface server with the port and interface_module"""
