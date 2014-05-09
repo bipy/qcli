@@ -13,6 +13,7 @@ __credits__ = ["Evan Bolyen"]
 
 from pyqi.core.exception import IncompetentDeveloperError
 
+
 def load_file_lines(option_value):
     """Return a list of strings, one per line in the file.
 
@@ -20,12 +21,13 @@ def load_file_lines(option_value):
     """
     if not hasattr(option_value, 'read'):
         raise IncompetentDeveloperError("Input type must be a file object.")
-        
+
     return [line.strip() for line in option_value]
+
 
 def load_file_contents(option_value):
     """Return the contents of a file as a single string."""
     if not hasattr(option_value, 'read'):
         raise IncompetentDeveloperError("Input type must be a file object.")
-    
+
     return option_value.read()

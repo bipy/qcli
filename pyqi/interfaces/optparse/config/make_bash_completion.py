@@ -9,14 +9,14 @@
 #-----------------------------------------------------------------------------
 
 __credits__ = ["Daniel McDonald", "Jai Ram Rideout", "Doug Wendel",
-    "Greg Caporaso"]
+               "Greg Caporaso"]
 
 from pyqi.core.interfaces.optparse import (OptparseOption,
                                            OptparseUsageExample,
                                            OptparseResult)
 from pyqi.core.interfaces.optparse.output_handler import write_string
 from pyqi.core.command import (make_command_in_collection_lookup_f,
-        make_command_out_collection_lookup_f)
+                               make_command_out_collection_lookup_f)
 from pyqi.commands.make_bash_completion import CommandConstructor
 
 cmd_in_lookup = make_command_in_collection_lookup_f(CommandConstructor)

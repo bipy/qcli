@@ -55,7 +55,7 @@ inputs = [
 ]
 
 outputs = [
-    ### InputName is used to tie this output to output-fp, which is an input...
+    # InputName is used to tie this output to output-fp, which is an input...
     OptparseResult(Parameter=cmd_out_lookup('result'),
                    Handler=write_list_of_strings,
                    InputName='output-fp')

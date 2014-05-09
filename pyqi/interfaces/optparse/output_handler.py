@@ -12,4 +12,4 @@ from __future__ import division
 __credits__ = ["Greg Caporaso", "Daniel McDonald", "Doug Wendel",
                "Jai Ram Rideout"]
 
-## Store project/inteface specific output handlers here
+# Store project/inteface specific output handlers here

@@ -22,7 +22,6 @@ cmdin_lookup = make_command_in_collection_lookup_f(CommandConstructor)
 cmdout_lookup = make_command_out_collection_lookup_f(CommandConstructor)
 
 
-
 usage_examples = [
     OptparseUsageExample(ShortDesc="Start html interface",
                          LongDesc="Starts an html interface server on the specified --port and --interface-module",
