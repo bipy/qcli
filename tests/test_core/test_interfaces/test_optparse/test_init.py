@@ -123,17 +123,18 @@ class OptparseInterfaceTests(TestCase):
 class GeneralTests(TestCase):
 
     def setUp(self):
-        self.obj = optparse_factory(ghetto,
-                                    [OptparseUsageExample('a', 'b', 'c')],
-                                    [OptparseOption(Type=str,
-                                                    Parameter=ghetto.CommandIns[
-                                                        'c'],
-                                                    ShortName='n')],
-                                    [OptparseResult(Type=str,
-                                                    Parameter=ghetto.CommandOuts[
-                                                        'itsaresult'],
-                                                    Handler=oh)],
-                                    '2.0-dev')
+        self.obj = optparse_factory(
+            ghetto,
+            [OptparseUsageExample('a', 'b', 'c')],
+            [OptparseOption(
+                Type=str,
+                Parameter=ghetto.CommandIns['c'],
+                ShortName='n')],
+            [OptparseResult(
+                Type=str,
+                Parameter=ghetto.CommandOuts['itsaresult'],
+                Handler=oh)],
+            '2.0-dev')
 
     def test_optparse_factory(self):
         # exercise it
@@ -164,7 +165,8 @@ class fabulous(OptparseInterface):
         return [OptparseUsageExample('a', 'b', 'c')]
 
     def _get_outputs(self):
-        return [OptparseResult(Parameter=ghetto.CommandOuts['itsaresult'], Handler=oh)]
+        return [OptparseResult(Parameter=ghetto.CommandOuts['itsaresult'],
+                               Handler=oh)]
 
     def _get_version(self):
         return '2.0-dev'
@@ -395,7 +397,7 @@ usage_lines = """usage: %prog [options] {}
 
 
 
-Example usage: 
+Example usage:
 Print help message and exit
  %prog -h
 

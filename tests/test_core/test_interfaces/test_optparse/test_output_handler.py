@@ -17,8 +17,8 @@ from StringIO import StringIO
 from shutil import rmtree
 from tempfile import mkdtemp
 from unittest import TestCase, main
-from pyqi.core.interfaces.optparse.output_handler import (write_string,
-                                                          write_list_of_strings, print_list_of_strings)
+from pyqi.core.interfaces.optparse.output_handler import (
+    write_string, write_list_of_strings, print_list_of_strings)
 from pyqi.core.exception import IncompetentDeveloperError
 
 

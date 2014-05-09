@@ -13,7 +13,8 @@ __credits__ = ["Greg Caporaso", "Daniel McDonald", "Doug Wendel",
                "Jai Ram Rideout"]
 
 from unittest import TestCase, main
-from pyqi.core.command import CommandIn, CommandOut, ParameterCollection, Command
+from pyqi.core.command import (CommandIn, CommandOut, ParameterCollection,
+                               Command)
 from pyqi.core.exception import (IncompetentDeveloperError,
                                  UnknownParameterError,
                                  MissingParameterError)
