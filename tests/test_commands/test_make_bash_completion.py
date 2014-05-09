@@ -23,6 +23,7 @@ __credits__ = ["Daniel McDonald", "Jai Ram Rideout", "Doug Wendel",
 
 
 class BashCompletionTests(TestCase):
+
     def setUp(self):
         """Set up data for unit tests."""
         self.cmd = BashCompletion()

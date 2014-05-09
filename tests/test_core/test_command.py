@@ -14,18 +14,21 @@ __credits__ = ["Greg Caporaso", "Daniel McDonald", "Doug Wendel",
 
 from unittest import TestCase, main
 from pyqi.core.command import CommandIn, CommandOut, ParameterCollection, Command
-from pyqi.core.exception import (IncompetentDeveloperError, 
-                                 UnknownParameterError, 
+from pyqi.core.exception import (IncompetentDeveloperError,
+                                 UnknownParameterError,
                                  MissingParameterError)
 
+
 class CommandTests(TestCase):
+
     def setUp(self):
         class stubby(Command):
             CommandIns = ParameterCollection([
-                            CommandIn('a',int,'', Required=True),
-                            CommandIn('b',int,'', Required=False, Default=5),
-                            CommandIn('c',int,'', Required=False, Default=10,
-                                      ValidateValue=lambda x: x == 10)])
+                CommandIn('a', int, '', Required=True),
+                CommandIn('b', int, '', Required=False, Default=5),
+                CommandIn('c', int, '', Required=False, Default=10,
+                          ValidateValue=lambda x: x == 10)])
+
             def run(self, **kwargs):
                 return {}
         self.stubby = stubby
@@ -45,39 +48,42 @@ class CommandTests(TestCase):
                                                         Required=True),
                                               CommandIn('b', str, 'help2',
                                                         Required=False)])
+
             def run(self, **kwargs):
                 return {}
 
         obs = foo()
 
         self.assertEqual(len(obs.Parameters), 2)
-        self.assertEqual(obs.run(bar={'a':10}), {})
+        self.assertEqual(obs.run(bar={'a': 10}), {})
 
     def test_validate_kwargs(self):
         stub = self.stubby()
-        kwargs = {'a':10, 'b':20}
-        
+        kwargs = {'a': 10, 'b': 20}
+
         # should work
         stub._validate_kwargs(kwargs)
 
-        kwargs = {'b':20}
+        kwargs = {'b': 20}
         self.assertRaises(MissingParameterError, stub._validate_kwargs, kwargs)
-        
-        kwargs = {'a':10, 'b':20, 'c':10}
+
+        kwargs = {'a': 10, 'b': 20, 'c': 10}
         stub._validate_kwargs(kwargs)
-        kwargs = {'a':10, 'b':20, 'c':20}
+        kwargs = {'a': 10, 'b': 20, 'c': 20}
         self.assertRaises(ValueError, stub._validate_kwargs, kwargs)
 
     def test_set_defaults(self):
         stub = self.stubby()
-        kwargs = {'a':10}
-        exp = {'a':10,'b':5,'c':10}
-        
+        kwargs = {'a': 10}
+        exp = {'a': 10, 'b': 5, 'c': 10}
+
         stub._set_defaults(kwargs)
 
         self.assertEqual(kwargs, exp)
 
+
 class ParameterTests(TestCase):
+
     def test_init(self):
         """Jog the init"""
         obj = CommandIn('a', str, 'help', Required=False)
@@ -90,10 +96,12 @@ class ParameterTests(TestCase):
         self.assertRaises(IncompetentDeveloperError, CommandIn, 'a', str,
                           'help', True, 'x')
 
+
 class ParameterCollectionTests(TestCase):
+
     def setUp(self):
-        self.pc = ParameterCollection([CommandIn('foo',str, 'help')])
-    
+        self.pc = ParameterCollection([CommandIn('foo', str, 'help')])
+
     def test_init(self):
         """Jog the init"""
         params = [CommandIn('a', str, 'help', Required=False),
@@ -111,7 +119,8 @@ class ParameterCollectionTests(TestCase):
 
     def test_getitem(self):
         self.assertRaises(UnknownParameterError, self.pc.__getitem__, 'bar')
-        self.assertEqual(self.pc['foo'].Name, 'foo') # make sure we can getitem
+        # make sure we can getitem
+        self.assertEqual(self.pc['foo'].Name, 'foo')
 
     def test_setitem(self):
         self.assertRaises(TypeError, self.pc.__setitem__, 'bar', 10)

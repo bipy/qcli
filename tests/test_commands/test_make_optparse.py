@@ -18,6 +18,7 @@ __credits__ = ["Daniel McDonald", "Jai Ram Rideout", "Doug Wendel",
 
 
 class MakeOptparseTests(TestCase):
+
     def setUp(self):
         self.cmd = MakeOptparse()
 

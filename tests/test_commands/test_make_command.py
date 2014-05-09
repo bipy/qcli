@@ -16,6 +16,7 @@ from pyqi.commands.make_command import MakeCommand
 
 
 class MakeCommandTests(TestCase):
+
     def setUp(self):
         """Set up a MakeCommand instance to use in the tests."""
         self.cmd = MakeCommand()

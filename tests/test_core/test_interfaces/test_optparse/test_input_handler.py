@@ -15,7 +15,9 @@ from unittest import TestCase, main
 from pyqi.core.interfaces.optparse.input_handler import command_handler
 from pyqi.commands.make_optparse import MakeOptparse
 
+
 class OptparseInputHandlerTests(TestCase):
+
     def setUp(self):
         pass
 

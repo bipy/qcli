@@ -14,7 +14,9 @@ __credits__ = ["Jai Ram Rideout"]
 from unittest import TestCase, main
 from pyqi.commands.code_header_generator import CodeHeaderGenerator
 
+
 class CodeHeaderGeneratorTests(TestCase):
+
     def setUp(self):
         """Set up a CodeHeaderGenerator instance to use in the tests."""
         self.cmd = CodeHeaderGenerator()
