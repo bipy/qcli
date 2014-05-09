@@ -57,7 +57,7 @@ if ver not in ['2.7']:
 long_description = """pyqi (canonically pronounced pie chee) is a Python framework designed to support wrapping general commands in multiple types of interfaces, including at the command line, HTML, and API levels."""
 
 setup(name='pyqi',
-      cmdclass={'build_py':build_py},
+      cmdclass={'build_py': build_py},
       version=__version__,
       license=__license__,
       description='pyqi: expose your interface',
@@ -81,9 +81,9 @@ setup(name='pyqi',
                 ],
       scripts=glob('scripts/pyqi*'),
       install_requires=[],
-      extras_require={'test':["nose >= 0.10.1",
-                              "tox >= 1.6.1"],
-                      'doc':"Sphinx >= 0.3"
-                     },
+      extras_require={'test': ["nose >= 0.10.1",
+                               "tox >= 1.6.1"],
+                      'doc': "Sphinx >= 0.3"
+                      },
       classifiers=classifiers
       )
